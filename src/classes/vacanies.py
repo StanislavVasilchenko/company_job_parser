@@ -8,10 +8,6 @@ class VacanciesFromEmployers:
         self.params = {
             "page": 0,
             "per_page": 100,
-            "text": "Python",
-            "area": 1,
-            "professional_role": '96'
-
         }
         self.url = "https://api.hh.ru/vacancies"
         self.all_vac = self.creation_of_vacancy_objects()
@@ -26,8 +22,8 @@ class VacanciesFromEmployers:
         vac_employers = []
         for emp in self.employers:
             self.url = emp.vacancies_url
-            pages = self.get_requests().get("page")
-            for page in range(pages + 1):
+            pages = self.get_requests().get("pages")
+            for page in range(pages):
                 self.params["page"] = page
                 response_vac = self.get_requests()
                 vac_employers.extend(response_vac["items"])
@@ -41,6 +37,8 @@ class VacanciesFromEmployers:
             format_vac = {
                 "employer_id": int(vac["employer"]["id"]),
                 "vacancy_name": vac["name"],
+                "salary_from": vac["salary"]["from"] if vac["salary"] is not None else None,
+                "salary_to": vac["salary"].get("to") if vac["salary"] is not None else None,
                 "city": vac["area"]["name"],
                 "url": vac["alternate_url"],
                 "requirement": vac["snippet"]["requirement"],
@@ -58,11 +56,13 @@ class VacanciesFromEmployers:
 
 class Vacancy:
 
-    def __init__(self, employer_id: int, vacancy_name: str, city: str,
-                 url: str, requirement: str,
+    def __init__(self, employer_id: int, vacancy_name: str, salary_from: int | None,
+                 salary_to: int | None, city: str, url: str, requirement: str,
                  responsibility: str, schedule: str):
         self.employer_id = employer_id
         self.vacancy_name = vacancy_name
+        self.salary_from = salary_from
+        self.salary_to = salary_to
         self.city = city
         self.url = url
         self.requirement = requirement
@@ -72,4 +72,6 @@ class Vacancy:
     def __repr__(self):
         return (f"Name - {self.vacancy_name}\n"
                 f"City - {self.city}\n"
-                f"URL - {self.url}\n")
+                f"URL - {self.url}\n"
+                f"salary_from - {self.salary_from}\n"
+                f"salary_to - {self.salary_to}\n")
