@@ -13,16 +13,23 @@ class VacanciesFromEmployers:
             "professional_role": '96'
 
         }
+        self.url = "https://api.hh.ru/vacancies"
         self.all_vac = self.creation_of_vacancy_objects()
+
+    def get_requests(self):
+        response = requests.get(url=self.url, params=self.params)
+        if response.status_code == 200:
+            return response.json()
+        raise ConnectionError
 
     def get_all_vacancies_from_employers(self) -> list[dict]:
         vac_employers = []
         for emp in self.employers:
-            url = emp.vacancies_url
-            pages = requests.get(url=url, params=self.params).json().get("page")
+            self.url = emp.vacancies_url
+            pages = self.get_requests().get("page")
             for page in range(pages + 1):
                 self.params["page"] = page
-                response_vac = requests.get(url=url, params=self.params).json()
+                response_vac = self.get_requests()
                 vac_employers.extend(response_vac["items"])
             print(f"{emp.employer_name} - done")
         return vac_employers
