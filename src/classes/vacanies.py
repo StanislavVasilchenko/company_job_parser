@@ -35,7 +35,7 @@ class VacanciesFromEmployers:
         format_vacancies = []
         for vac in vacancies:
             format_vac = {
-                "employer_id": int(vac["employer"]["id"]),
+                "employer_id": int(vac["employer"].get("id")),
                 "vacancy_name": vac["name"],
                 "salary_from": vac["salary"]["from"] if vac["salary"] is not None else None,
                 "salary_to": vac["salary"].get("to") if vac["salary"] is not None else None,
@@ -70,8 +70,12 @@ class Vacancy:
         self.schedule = schedule
 
     def __repr__(self):
-        return (f"Name - {self.vacancy_name}\n"
-                f"City - {self.city}\n"
-                f"URL - {self.url}\n"
+        return (f"employer_id - {self.employer_id}\n"
+                f"vacancy_name - {self.vacancy_name}\n"
                 f"salary_from - {self.salary_from}\n"
-                f"salary_to - {self.salary_to}\n")
+                f"salary_to - {self.salary_to}\n"
+                f"city - {self.city}\n"
+                f"url {self.url}\n"
+                f"requirement - {self.requirement}\n"
+                f"responsibility - {self.responsibility}\n"
+                f"schedule - {self.schedule}\n")

@@ -1,4 +1,3 @@
-from abc import ABC, abstractmethod
 import requests
 
 
@@ -25,7 +24,7 @@ class EmployersHH:
             all_employers.extend(response["items"])
         return all_employers
 
-    def format_employers(self):
+    def format_employers(self) -> list[object]:
         format_employers_list = []
         employers = self.get_employers()
         for employer in employers:
