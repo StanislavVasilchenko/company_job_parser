@@ -1,25 +1,26 @@
 import psycopg2
-import csv
+from src.utils import write_in_csv
 
 
 class DBManager:
     def __init__(self, params: dict):
         self.params = params
+        self.con = psycopg2.connect(**self.params)
+        self.cur = self.con.cursor()
 
     def get_companies_and_vacancies_count(self):
-        """Получает список всех компаний и количество вакансий у каждой компании."""
-        conn = psycopg2.connect(**self.params)
-        with conn.cursor() as cur:
-            cur.execute("""select employer_name, count(vacancy_id) as number_of_vacancies from vacancy
+        """Получает список всех компаний и количество вакансий у каждой компании.
+        И записывает полученные данные в csv файл companies_and_vacancies_count.csv"""
+
+        rows_name = ["Название компании", "Кол-во вакансий"]
+        file_name = "csv_files/companies_and_vacancies_count.csv"
+
+        self.cur.execute("""select employer_name, count(vacancy_id) as number_of_vacancies from vacancy
                                 join employers using (employer_id)
                                 group by employer_name""")
 
-            with open("companies_and_vacancies_count.csv", "w", encoding="utf-8") as csvfile:
-                writer = csv.writer(csvfile)
-                writer.writerow(["Название компании", "Кол-во вакансий"])
-                writer.writerows(cur.fetchall())
-
-        conn.close()
+        write_in_csv(file_name, self.cur.fetchall(), rows_name)
+        self.con.close()
 
     def get_all_vacancies(self):
         """Получает список всех вакансий с указанием названия компании,
