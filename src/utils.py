@@ -1,5 +1,6 @@
 from config import config
 import psycopg2
+import csv
 
 
 def create_database(params, db_name):
@@ -31,6 +32,7 @@ def create_tables(cur, params, db_name):
                     schedule text)
         """)
 
+
 def filling_out_the_employer_table(cur, employers_list: list[object]) -> None:
     for employer in employers_list:
         cur.execute("""INSERT INTO employers VALUES (%s, %s, %s)""",
@@ -38,6 +40,7 @@ def filling_out_the_employer_table(cur, employers_list: list[object]) -> None:
                      employer.employer_name,
                      employer.vacancies_url)
                     )
+
 
 def filling_out_the_vacancy_table(cur, vacancyes_list: list[object]) -> None:
     for vacancy in vacancyes_list:
@@ -54,3 +57,10 @@ def filling_out_the_vacancy_table(cur, vacancyes_list: list[object]) -> None:
                      vacancy.responsibility,
                      vacancy.schedule)
                     )
+
+
+def write_in_csv(name: str, data: list[tuple], rows_name: list[str]):
+    with open(name, 'w', encoding="utf-8") as file:
+        writer = csv.writer(file)
+        writer.writerow(rows_name)
+        writer.writerows(data)
