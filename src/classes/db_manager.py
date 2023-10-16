@@ -11,6 +11,7 @@ class DBManager:
     def get_companies_and_vacancies_count(self):
         """Получает список всех компаний и количество вакансий у каждой компании.
         И записывает полученные данные в csv файл companies_and_vacancies_count.csv"""
+
         rows_name = ["Название компании", "Кол-во вакансий"]
         file_name = "csv_files/companies_and_vacancies_count.csv"
 
@@ -18,7 +19,8 @@ class DBManager:
                                 join employers using (employer_id)
                                 group by employer_name""")
 
-        write_in_csv(file_name, self.cur.fetchall(), rows_name)
+        data = self.cur.fetchall()
+        write_in_csv(file_name, data, rows_name)
 
     def get_all_vacancies(self):
         """Получает список всех вакансий с указанием названия компании,
@@ -30,7 +32,8 @@ class DBManager:
 
         self.cur.execute("""select employer_name, vacancy_name, salary_from, salary_to, url from vacancy
                             join employers using(employer_id)""")
-        write_in_csv(file_name, self.cur.fetchall(), rows_name)
+        data = self.cur.fetchall()
+        write_in_csv(file_name, data, rows_name)
 
     def get_avg_salary(self):
         """Получает среднюю зарплату по вакансиям. И сохраняет результат в csv файл avg_salary.csv"""
@@ -39,13 +42,21 @@ class DBManager:
         file_name = "csv_files/avg_salary.csv"
 
         self.cur.execute("""select avg(salary_from), avg(salary_to) from vacancy""")
-        write_in_csv(file_name, self.cur.fetchall(), rows_name)
-
+        data = self.cur.fetchall()
+        write_in_csv(file_name, data, rows_name)
 
     def get_vacancies_with_higher_salary(self):
         """Получает список всех вакансий,
          у которых зарплата выше средней по всем вакансиям."""
-        pass
+
+        rows_name = ["Название вакансии", "Зарплата от", "Зарплата до", "Ссылка на вакансию"]
+        file_name = "csv_files/vacancies_with_higher_salary.csv"
+
+        self.cur.execute("""select vacancy_name, salary_from, salary_to, url from vacancy
+                            where salary_from > (select avg(salary_from) from vacancy)
+                            and salary_to > (select avg(salary_to) from vacancy)""")
+        data = self.cur.fetchall()
+        write_in_csv(file_name, data, rows_name)
 
     def get_vacancies_with_keyword(self):
         """Получает список всех вакансий,
