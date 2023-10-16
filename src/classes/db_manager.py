@@ -58,7 +58,20 @@ class DBManager:
         data = self.cur.fetchall()
         write_in_csv(file_name, data, rows_name)
 
-    def get_vacancies_with_keyword(self):
+    def get_vacancies_with_keyword(self, key_words: list[str]):
         """Получает список всех вакансий,
          в названии которых содержатся переданные в метод слова, например python."""
-        pass
+
+        rows_name = ["Название вакансии", "Зарплата от", "Зарплата до", "Ссылка на вакансию"]
+        file_name = "csv_files/vacancies_with_keyword.csv"
+        data = []
+        for word in key_words:
+            self.cur.execute(f"""select vacancy_name, city, requirement, salary_from, salary_to, url from vacancy
+                                where requirement like '%{word}'
+                                or requirement like '%{word}%'
+                                or requirement like '{word}%'
+                                """)
+            data_request_from_db = self.cur.fetchall()
+            data.extend(data_request_from_db)
+        write_in_csv(file_name, data, rows_name)
+
