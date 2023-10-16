@@ -14,14 +14,14 @@ def create_database(params, db_name):
 
 def create_tables(cur, params, db_name):
     cur.execute("""CREATE TABLE employers(
-                    employer_id int,
+                    employer_id int PRIMARY KEY ,
                     employer_name varchar(100),
                     vacancies_url text
                     )
                 """)
     cur.execute("""CREATE TABLE vacancy (
                     vacancy_id SERIAL ,
-                    employer_id int,
+                    employer_id int references employers(employer_id) ,
                     vacancy_name varchar(100),
                     salary_from int,
                     salary_to int,
