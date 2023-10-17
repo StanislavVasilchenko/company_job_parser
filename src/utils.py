@@ -3,7 +3,10 @@ import psycopg2
 import csv
 
 
-def create_database(params, db_name):
+def create_database(params, db_name) -> None:
+    """Создает базу данных.
+    Принимает параметры для подключения к БД и название БД
+    """
     conn = psycopg2.connect(dbname="postgres", **params)
     conn.autocommit = True
     with conn.cursor() as cur:
@@ -12,7 +15,8 @@ def create_database(params, db_name):
     conn.close
 
 
-def create_tables(cur, params, db_name):
+def create_tables(cur, params) -> None:
+    """Создает таблицы employers и vacancy в БД"""
     cur.execute("""CREATE TABLE employers(
                     employer_id int PRIMARY KEY ,
                     employer_name varchar(100),
@@ -34,6 +38,7 @@ def create_tables(cur, params, db_name):
 
 
 def filling_out_the_employer_table(cur, employers_list: list[object]) -> None:
+    """Заполняет таблицу employer данными. Принимает на вход список с объектами Employer"""
     for employer in employers_list:
         cur.execute("""INSERT INTO employers VALUES (%s, %s, %s)""",
                     (employer.employer_id,
@@ -43,6 +48,7 @@ def filling_out_the_employer_table(cur, employers_list: list[object]) -> None:
 
 
 def filling_out_the_vacancy_table(cur, vacancyes_list: list[object]) -> None:
+    """Заполняет таблицу vacancy данными. Принимает на вход список с объектами Vacancy"""
     for vacancy in vacancyes_list:
         cur.execute("""INSERT INTO vacancy (employer_id, vacancy_name, salary_from,
                                             salary_to, city, url, requirement, responsibility,
@@ -59,7 +65,8 @@ def filling_out_the_vacancy_table(cur, vacancyes_list: list[object]) -> None:
                     )
 
 
-def write_in_csv(name: str, data: list[tuple], rows_name: list[str]):
+def write_in_csv(name: str, data: list[tuple], rows_name: list[str]) -> None:
+    """Записывает данные в csv файл"""
     with open(name, 'w', encoding="utf-8") as file:
         writer = csv.writer(file)
         writer.writerow(rows_name)

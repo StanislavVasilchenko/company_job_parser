@@ -2,6 +2,7 @@ import requests
 
 
 class EmployersHH:
+    """Класс для получения данных о компаниях с сайта HH.ru"""
     BASE_URL = "https://api.hh.ru/employers"
 
     def __init__(self, company_name_list: list):
@@ -16,7 +17,8 @@ class EmployersHH:
         }
         self.employers = self.format_employers()
 
-    def get_employers(self):
+    def get_employers(self) -> list[dict]:
+        """Подключается к сайту НН и получает данные о компаниях"""
         all_employers = []
         for company_name in self.company_name_list:
             self.params["text"] = company_name
@@ -25,6 +27,12 @@ class EmployersHH:
         return all_employers
 
     def format_employers(self) -> list[object]:
+        """Преобразует данные о работодателе в вид:
+        employer_id - id работодателя,
+        employer_name - название компании,
+        vacancies_url - ссылка на все открытые вакансии работодателя.
+        Возвращает список с объектами Employer
+        """
         format_employers_list = []
         employers = self.get_employers()
         for employer in employers:
@@ -56,6 +64,11 @@ class EmployersHH:
 
 
 class Employer:
+    """Класс представления компании
+    employer_id - id компании согласно сайта HH.ru,
+    employer_name - название компании,
+    vacancies_url - ссылка на все вакансии компании
+    """
     def __init__(self, employer_id: int,
                  employer_name: str,
                  vacancies_url: str):

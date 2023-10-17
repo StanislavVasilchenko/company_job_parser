@@ -2,6 +2,7 @@ import requests
 
 
 class VacanciesFromEmployers:
+    """Класс для получения всех вакансий работодателей"""
 
     def __init__(self, employers: list):
         self.employers = employers
@@ -12,13 +13,16 @@ class VacanciesFromEmployers:
         self.url = "https://api.hh.ru/vacancies"
         self.all_vac = self.creation_of_vacancy_objects()
 
-    def get_requests(self):
+    def get_requests(self) -> list[dict]:
+        """Подключается к сайту HH.ru"""
         response = requests.get(url=self.url, params=self.params)
         if response.status_code == 200:
             return response.json()
         raise ConnectionError
 
     def get_all_vacancies_from_employers(self) -> list[dict]:
+        """Получает все вакансии работодателя.
+        Возвращает список словарей"""
         vac_employers = []
         for emp in self.employers:
             self.url = emp.vacancies_url
@@ -31,6 +35,17 @@ class VacanciesFromEmployers:
         return vac_employers
 
     def get_format_vacancies_from_employers(self) -> list[dict]:
+        """Форматирует вакансии в виде:
+        employer_id - id работодателя,
+        vacancy_name - название вакансии,
+        salary_from - оплата от...,
+        salary_to - оплата до...,
+        city - город в котором размещена вакансия,
+        url - ссылка на вакансию,
+        requirement - описание требований к вакансии,
+        responsibility - описание обязанностей,
+        schedule - описание рабочего графика (полный день, удаленная работа и т.д.)
+        """
         vacancies = self.get_all_vacancies_from_employers()
         format_vacancies = []
         for vac in vacancies:
@@ -49,12 +64,24 @@ class VacanciesFromEmployers:
         return format_vacancies
 
     def creation_of_vacancy_objects(self) -> list[object]:
+        """Складывает вакансии в список в представлении класса Vacancy"""
         vacancies_for_packaging = self.get_format_vacancies_from_employers()
         creation_of_vacancy = [Vacancy(**format_vac) for format_vac in vacancies_for_packaging]
         return creation_of_vacancy
 
 
 class Vacancy:
+    """Класс для представления вакансии:
+    employer_id - id работодателя,
+    vacancy_name - название вакансии,
+    salary_from - оплата от...,
+    salary_to - оплата до...,
+    city - город в котором размещена вакансия,
+    url - ссылка на вакансию,
+    requirement - описание требований к вакансии,
+    responsibility - описание обязанностей,
+    schedule - описание рабочего графика (полный день, удаленная работа и т.д.)
+    """
 
     def __init__(self, employer_id: int, vacancy_name: str, salary_from: int | None,
                  salary_to: int | None, city: str, url: str, requirement: str,
