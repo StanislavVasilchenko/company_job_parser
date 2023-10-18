@@ -2,6 +2,7 @@ import psycopg2
 
 
 class DBManager:
+    """Класс для работы с БД"""
     def __init__(self, params: dict):
         self.params = params
         self.con = psycopg2.connect(**self.params)
