@@ -6,6 +6,8 @@ class EmployersHH:
     BASE_URL = "https://api.hh.ru/employers"
 
     def __init__(self, company_name_list: list):
+        self.verify_company_name_list(company_name_list)
+
         self.company_name_list = company_name_list
         self.params = {
             "text": None,
@@ -44,6 +46,12 @@ class EmployersHH:
             format_employers_list.append(Employer(**format_employer))
         return format_employers_list
 
+    @classmethod
+    def verify_company_name_list(cls, company_name_list):
+        """Проверяет что бы company_name_list не был пустым"""
+        if not company_name_list:
+            raise TypeError("Список работодателей не должен быть пустым")
+
     def __len__(self):
         return len(self.employers)
 
@@ -69,6 +77,7 @@ class Employer:
     employer_name - название компании,
     vacancies_url - ссылка на все вакансии компании
     """
+
     def __init__(self, employer_id: int,
                  employer_name: str,
                  vacancies_url: str):

@@ -77,9 +77,9 @@ def user_interaction() -> tuple:
     """Функция взаимодействия с пользователем"""
     companies_list = []
     while True:
-        company_name = input("Введите название компании (По одной компании за раз) или q для завершения ввода - ")
+        company_name = input("Введите название компании (По одной компании за раз) или q, quit для завершения ввода - ")
         match company_name:
-            case str() as company if company == "q":
+            case ("q" | "quit"):
                 break
             case str() as company if len(company) != 0:
                 companies_list.append(company_name)
@@ -93,6 +93,3 @@ def user_interaction() -> tuple:
 
     data_base_name = input("Введите название БД которую хотите создать - ")
     return companies_list, data_base_name
-
-
-
