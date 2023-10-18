@@ -78,9 +78,18 @@ def user_interaction() -> tuple:
     companies_list = []
     while True:
         company_name = input("Введите название компании (По одной компании за раз) или q для завершения ввода - ")
-        if company_name == "q":
-            break
-        companies_list.append(company_name.split())
+        match company_name:
+            case str() as company if company == "q":
+                break
+            case str() as company if len(company) != 0:
+                companies_list.append(company_name)
+            case _:
+                continue
+
+    match companies_list:
+        case list() as length if len(length) == 0:
+            raise TypeError("Список работодателей не должен быть пустым")
+    companies_list = list(set(companies_list))
 
     data_base_name = input("Введите название БД которую хотите создать - ")
     return companies_list, data_base_name
